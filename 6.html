@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>6 Months of Us - Digital Scrapbook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Playfair Display", serif;
+        background-color: #fffafa;
+        overflow-x: hidden;
+      }
+      .font-signature {
+        font-family: "Dancing Script", cursive;
+      }
+      .font-sans {
+        font-family: "Montserrat", sans-serif;
+      }
+
+      @keyframes fall {
+        0% {
+          transform: translateY(-10vh) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.6;
+        }
+        90% {
+          opacity: 0.6;
+        }
+        100% {
+          transform: translateY(110vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+      .petal {
+        position: fixed;
+        top: -10%;
+        pointer-events: none;
+        z-index: 0;
+        animation: fall linear infinite;
+      }
+      .polaroid {
+        background: white;
+        padding: 0.75rem 0.75rem 2.5rem 0.75rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #fcf2f2;
+        transition: all 0.4s ease;
+      }
+      .polaroid:hover {
+        transform: scale(1.05) rotate(0deg) !important;
+        z-index: 20;
+        box-shadow: 0 15px 30px rgba(251, 113, 133, 0.2);
+      }
+      .music-visualizer-bar {
+        width: 3px;
+        background: #fb7185;
+        margin: 0 1px;
+        animation: bounce 0.5s ease-in-out infinite alternate;
+      }
+      @keyframes bounce {
+        from {
+          height: 4px;
+        }
+        to {
+          height: 18px;
+        }
+      }
+      .scroll-custom::-webkit-scrollbar {
+        width: 4px;
+      }
+      .scroll-custom::-webkit-scrollbar-thumb {
+        background: #fecdd3;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop>
+      <source
+        src="C:\xampp\htdocs\6 month annive\Barasuara - Terbuang Dalam Waktu (Official Lyric Video) (mp3cut.net).mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <!-- Overlay Awal -->
+    <div
+      id="startOverlay"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-rose-50 cursor-pointer transition-opacity duration-1000"
+    >
+      <div class="text-center">
+        <div class="text-rose-400 mb-6 flex justify-center animate-pulse">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="80"
+            height="80"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+            />
+          </svg>
+        </div>
+        <h1 class="text-3xl font-bold text-rose-800 mb-2">Our 180 Days</h1>
+        <p class="font-sans tracking-widest text-rose-400 uppercase text-xs">
+          tab kalo kamu mau buka isi ini
+        </p>
+      </div>
+    </div>
+
+    <!-- Petals Container -->
+    <div id="petalsContainer"></div>
+
+    <!-- Music Player UI -->
+    <div
+      class="fixed top-6 right-6 z-50 flex items-center gap-3 bg-white/90 backdrop-blur-md p-3 rounded-full border border-rose-100 shadow-lg"
+    >
+      <div id="visualizer" class="hidden flex items-end h-4 mr-1">
+        <div class="music-visualizer-bar" style="animation-delay: 0.1s"></div>
+        <div class="music-visualizer-bar" style="animation-delay: 0.3s"></div>
+        <div class="music-visualizer-bar" style="animation-delay: 0.2s"></div>
+      </div>
+      <button
+        id="musicToggle"
+        class="w-8 h-8 rounded-full bg-rose-400 flex items-center justify-center text-white hover:bg-rose-500 transition-all"
+      >
+        <svg
+          id="playIcon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <svg
+          id="pauseIcon"
+          class="hidden"
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="6" y="4" width="4" height="16"></rect>
+          <rect x="14" y="4" width="4" height="16"></rect>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Main Content Area -->
+    <div
+      class="min-h-screen flex items-center justify-center p-4 relative z-10"
+    >
+      <div
+        class="max-w-4xl w-full bg-white shadow-2xl rounded-3xl overflow-hidden relative border-[10px] border-white ring-1 ring-rose-100 flex flex-col min-h-[750px] transition-all duration-500"
+      >
+        <!-- Content Sections -->
+        <div
+          id="pagesContent"
+          class="flex-grow flex items-center justify-center p-6 md:p-12 overflow-y-auto scroll-custom"
+        >
+          <!-- Pages will be injected here by JS -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="absolute inset-y-0 left-0 flex items-center">
+          <button
+            onclick="prevPage()"
+            class="p-2 text-rose-200 hover:text-rose-400 transition-all z-20 hover:scale-125"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </button>
+        </div>
+        <div class="absolute inset-y-0 right-0 flex items-center">
+          <button
+            onclick="nextPage()"
+            class="p-2 text-rose-200 hover:text-rose-400 transition-all z-20 hover:scale-125"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Footer Progress -->
+        <div
+          class="px-8 py-4 bg-white border-t border-rose-50 flex justify-between items-center text-[9px] font-sans font-bold text-rose-300 tracking-[0.3em] uppercase"
+        >
+          <div id="pageIndicator">PAGE 01 / 10</div>
+          <div id="progressBar" class="flex gap-1.5">
+            <!-- Progress dots injected here -->
+          </div>
+          <div>LOVE STORY</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const pages = [
+        {
+          type: "cover",
+          title: "Half a Year With You",
+          subtitle: "180 Days of Us",
+          date: "22 Juli 2025 - 22 Januari 2026",
+          quote: "“Half a year, countless memories, one love.”",
+        },
+        {
+          type: "story",
+          title: "How It All Started",
+          content:
+            "eummm ini mungkin bisa dibilang first date kita and alsoo our first meet im verry happy to know u.",
+          emoji: "💌",
+          caption: "The very first meet.",
+        },
+        {
+          type: "list",
+          title: "Our Firsts Together",
+          items: [
+            {
+              label: "First Date",
+              val: "AHHAHAHAHAHHAHA hmmm such a nice experience karenaa aku dan kamu literally panikk sama sama takut akward.",
+            },
+            {
+              label: "First confess",
+              val: "it was perfect yaaa walaupun aku deg degan parah dan stepnyaa pun ga sesuai yang aku rencanain.",
+            },
+            {
+              label: "First rental date",
+              val: "aku sangat senang padaa saat aku tau ini first experience kamu aku sangat suka kalo first experience kamu sama aku.",
+            },
+            {
+              label: "First blokm date and also first date after jadian",
+              val: "Momen yang paling berbekas diaku karena pertama kali kita jalan setelahh jadiaan and it such a wonderfull experience i think im the happiest man in the world.",
+            },
+          ],
+        },
+        {
+          type: "gallery",
+          title: "Our Mensive",
+          photos: [
+            {
+              label: "i think this is our first mensive?? ya kann",
+              em: "📸",
+              rot: "-rotate-3",
+            },
+            {
+              label:
+                "our first selffphotostudioo yangg dimanaa banyak bingung gaya HAHHAHAHAHAHA",
+              em: "🚗",
+              rot: "rotate-2",
+            },
+            {
+              label: "ke ragunan liat kebarannya jessie",
+              em: "🍕",
+              rot: "rotate-6",
+            },
+            {
+              label: "eumm mensivee palingg basicc tapii aku tetep senengg",
+              em: "🤳",
+              rot: "-rotate-2",
+            },
+          ],
+        },
+        {
+          type: "list-love",
+          title: "6 Things I Love About You",
+          items: [
+            "akuu sukaa happy vibess kamuuu it influencee and make me happy too.",
+            "i lovee every yappingg yangg kamu lontarin AHHAHAHAHAHA selaluu adaa aja cerita kamuu.",
+            "aku sukaa setiap atau semuaa perhatiann dari kamu sekecill apapun ituu aku ngerasa disayangg banget.",
+            "i love ur smile i love ur eye.",
+            "akuu suka caraa kamu handle saat aku kayak anak kecil.",
+            "akuu suka honnest kamu yangg selalu ceritaa apapun itu.",
+          ],
+        },
+        {
+          type: "story",
+          title: "Little Things We Do",
+          content:
+            "Chat random tengah malam, voice note nggak jelas, sampai ngambek kecil yang selalu berakhir dengan pelukan. Hal-hal kecil ini yang paling berharga.",
+          emoji: "✨",
+          caption: "Small things, big love.",
+        },
+        {
+          type: "timeline",
+          title: "6 Chapters of Love",
+          steps: [
+            { m: "Bulan 1", d: "fasee palingg butterflyy era." },
+            {
+              m: "Bulan 2",
+              d: "masihh samaa sangat amat butterflyy dan kangen setiap saat.",
+            },
+            {
+              m: "Bulan 3",
+              d: "mulai ada cekcokk belajar dari kealaham (maaf kalo aku masih belum ngertiin kamu).",
+            },
+            {
+              m: "Bulan 4",
+              d: "kitaa cooldownn dann balik lagii ke butterflyy eraa.",
+            },
+            {
+              m: "Bulan 5",
+              d: "agakk sedikitt bumpyy karenaa perbedaan kita.",
+            },
+            {
+              m: "Bulan 6",
+              d: "Im really sorry for this month maaf atas segala kelakuan buruk ku dan bad treats aku ke kamu.",
+            },
+          ],
+        },
+        {
+          type: "letter",
+          title: "A Little Love Letter",
+          text: "Thank you so much sudah bertahan sejauh ini 6 month with you maaf atas segala kesalahan yang telah aku buat aku ngerti kata maaf aja ga cukup untuk mulihin kepercayaan kamu tapi aku bener bener minta maaf atas segala bad treats yang aku lakukan buat kamu sedih, sakit hati, tertekan dll give me a chance and time untuk bisa lebih paham dan ngertiin kamu dan mulai belajar untuk komunkasi dengan lebih baik dan mengontrol semua emosional aku dan perasaan aku serta menyelesaikan masalah tanpa campur tangan org lain atau cerita ke org lain dan juga aku akan berusaha menjadi lebih baik dalam mengutarakan atau menyampaikan segala perasaan aku tanpa raasa emosi marah dllnya aku bener bener sayang kamu i love u so much sayangg and alwayss will be aki minta maaf atas semua yang aku lakuin dan aku minta maaf masih jadi cowo yang banyak kurangnya.",
+          sig: "ur number one lover,",
+        },
+        {
+          type: "list",
+          title: "Our Future Bucket List",
+          items: [
+            { label: "ke dufan", val: "Main semua wahana." },
+            { label: "Masak Bareng", val: "Menu baru tiap minggu." },
+            { label: "night ride", val: "keliling semua area night ride." },
+            { label: "Growing Old", val: "Goals paling utama." },
+          ],
+        },
+        {
+          type: "closing",
+          title: "6 Months Down...",
+          subtitle: "Forever to Go.",
+          quote: "“This is just the beginning of our forever.”",
+        },
+      ];
+
+      let currentPage = 0;
+      const bgMusic = document.getElementById("bgMusic");
+      const startOverlay = document.getElementById("startOverlay");
+
+      function createPetals() {
+        const container = document.getElementById("petalsContainer");
+        for (let i = 0; i < 15; i++) {
+          const petal = document.createElement("div");
+          petal.className = "petal";
+          petal.innerHTML = "🌸";
+          petal.style.left = Math.random() * 100 + "%";
+          petal.style.animationDuration = Math.random() * 5 + 6 + "s";
+          petal.style.animationDelay = Math.random() * 5 + "s";
+          petal.style.fontSize = Math.random() * 10 + 15 + "px";
+          container.appendChild(petal);
+        }
+      }
+
+      function renderProgress() {
+        const bar = document.getElementById("progressBar");
+        bar.innerHTML = pages
+          .map(
+            (_, i) => `
+                <div class="h-1.5 rounded-full transition-all duration-300 ${i === currentPage ? "bg-rose-400 w-6" : "bg-rose-100 w-1.5"}"></div>
+            `,
+          )
+          .join("");
+      }
+
+      function renderPage() {
+        const container = document.getElementById("pagesContent");
+        const indicator = document.getElementById("pageIndicator");
+        const page = pages[currentPage];
+
+        indicator.innerText = `PAGE ${String(currentPage + 1).padStart(2, "0")} / 10`;
+        renderProgress();
+
+        let html = "";
+        const anim = "animate-in fade-in zoom-in duration-700";
+
+        switch (page.type) {
+          case "cover":
+            html = `
+                        <div class="text-center space-y-8 ${anim}">
+                            <div class="relative inline-block">
+                                <div class="absolute inset-0 bg-rose-200 blur-3xl opacity-20"></div>
+                                <div class="text-rose-400 relative z-10 text-7xl font-signature">180</div>
+                            </div>
+                            <div class="space-y-2">
+                                <h1 class="text-5xl font-bold text-rose-900">${page.title}</h1>
+                                <p class="font-sans uppercase tracking-[0.3em] text-stone-400 text-xs">${page.subtitle}</p>
+                            </div>
+                            <p class="text-rose-400 font-signature text-2xl">${page.quote}</p>
+                            <div class="text-[10px] font-sans text-stone-300 tracking-widest">${page.date}</div>
+                        </div>
+                    `;
+            break;
+          case "story":
+            html = `
+    <section class="min-h-screen flex items-center justify-center p-6">
+      <div class="w-full max-w-lg space-y-8">
+
+        <h2 class="text-3xl font-bold text-rose-900 border-b border-rose-100 pb-4">
+          ${page.title}
+        </h2>
+
+        <div class="polaroid rotate-2 mx-auto ${
+          page.title === "Little Things We Do" ? "w-full max-w-xl" : "w-64"
+        }">
+          <img
+            src="${
+              page.title === "Little Things We Do"
+                ? "random.jpeg"
+                : "wjfirst.jpeg"
+            }"
+            class="w-full ${
+              page.title === "Little Things We Do"
+                ? "h-[420px] object-contain"
+                : "aspect-square object-cover"
+            }"
+          />
+          <p class="mt-4 font-signature text-xl text-stone-500 text-center">
+            ${page.caption}
+          </p>
+        </div>
+
+        <p class="text-stone-600 leading-relaxed text-lg italic text-center">
+          "${page.content}"
+        </p>
+
+      </div>
+    </section>
+  
+  
+
+
+                        
+                    `;
+            break;
+          case "list":
+            html = `
+                        <div class="w-full max-w-lg space-y-10 ${anim}">
+                            <h2 class="text-3xl font-bold text-rose-900 text-center">${page.title}</h2>
+                            <div class="grid gap-4">
+                                ${page.items
+                                  .map(
+                                    (it) => `
+                                    <div class="bg-rose-50/50 p-4 rounded-2xl border border-white flex justify-between items-center group hover:bg-white hover:shadow-md transition-all">
+                                        <span class="font-bold text-rose-800 text-sm uppercase tracking-wider">${it.label}</span>
+                                        <span class="text-stone-500 italic text-sm">${it.val}</span>
+                                    </div>
+                                `,
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                    `;
+            break;
+          case "gallery":
+            html = `
+                        <div class="w-full space-y-10 ${anim}">
+  <h2 class="text-3xl font-bold text-rose-900 text-center">
+    Our Moments
+  </h2>
+
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+
+    <div class="polaroid -rotate-3">
+      <img src="bulan1.jpeg" class="aspect-square w-full object-cover mb-4" />
+      <p class="text-center font-sans font-bold text-[10px] uppercase tracking-widest text-stone-400">
+       i think this is our first mensive?? ya kann
+      </p>
+    </div>
+
+    <div class="polaroid rotate-2">
+      <img src="bulan2.jpeg" class="aspect-square w-full object-cover mb-4" />
+      <p class="text-center font-sans font-bold text-[10px] uppercase tracking-widest text-stone-400">
+       our first selffphotostudioo yangg dimanaa banyak bingung gaya HAHHAHAHAHAHA
+      </p>
+    </div>
+
+    <div class="polaroid rotate-6">
+      <img src="bulan3.jpeg" class="aspect-square w-full object-cover mb-4" />
+      <p class="text-center font-sans font-bold text-[10px] uppercase tracking-widest text-stone-400">
+        ke ragunan liat kebarannya jessie
+      </p>
+    </div>
+
+    <div class="polaroid -rotate-2">
+      <img src="bulan4.jpeg" class="aspect-square w-full object-cover mb-4" />
+      <p class="text-center font-sans font-bold text-[10px] uppercase tracking-widest text-stone-400">
+      blok m lagihhh HAHAHAAHHAHA lunar kameranya baguss dan ini salahsatu top 3 foto kesukaan aku
+      </p>
+    </div>
+
+    <!-- FOTO TAMBAHAN 1 -->
+    <div class="polaroid rotate-3">
+      <img src="bulan5.jpeg" class="aspect-square w-full object-cover mb-4" />
+      <p class="text-center font-sans font-bold text-[10px] uppercase tracking-widest text-stone-400">
+        eumm mensivee palingg basicc tapii aku tetep senengg
+      </p>
+    </div>
+
+    <!-- FOTO TAMBAHAN 2 -->
+    <div class="polaroid -rotate-4">
+      <img src="img/moment6.jpg" class="aspect-square w-full object-cover mb-4" />
+      <p class="text-center font-sans font-bold text-[10px] uppercase tracking-widest text-stone-400">
+        mau kemana kitaa??? transtudioo nanti kalo udh liat ini sung jawab yaa sayangg
+      </p>
+    </div>
+
+  </div>
+</div>
+
+                    `;
+            break;
+          case "list-love":
+            html = `
+                        <div class="w-full max-w-lg space-y-8 ${anim}">
+                            <h2 class="text-3xl font-bold text-rose-900 text-center">${page.title}</h2>
+                            <div class="space-y-4">
+                                ${page.items
+                                  .map(
+                                    (it, i) => `
+                                    <div class="flex items-center gap-4 text-stone-700">
+                                        <div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 font-bold text-xs">${i + 1}</div>
+                                        <p class="text-lg italic font-light">${it}</p>
+                                    </div>
+                                `,
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                    `;
+            break;
+          case "timeline":
+            html = `
+                        <div class="w-full max-w-xl space-y-10 ${anim}">
+                            <h2 class="text-3xl font-bold text-rose-900 text-center">${page.title}</h2>
+                            <div class="grid gap-6 border-l-2 border-rose-100 ml-4 pl-8">
+                                ${page.steps
+                                  .map(
+                                    (s) => `
+                                    <div class="relative">
+                                        <div class="absolute -left-10 top-1 w-4 h-4 rounded-full bg-rose-300 border-4 border-white"></div>
+                                        <div class="font-bold text-rose-400 font-sans text-[10px] uppercase tracking-widest">${s.m}</div>
+                                        <p class="text-stone-600 text-sm font-light">${s.d}</p>
+                                    </div>
+                                `,
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                    `;
+            break;
+          case "letter":
+            html = `
+                        <div class="w-full max-w-lg ${anim}">
+                            <div class="bg-white p-10 rounded-xl shadow-inner border border-rose-50 relative">
+                                <div class="text-rose-100 absolute top-4 right-6 font-signature text-6xl opacity-30">Love</div>
+                                <h2 class="text-2xl font-bold text-rose-800 mb-6">Dear MyJessie,</h2>
+                                <p class="text-stone-600 leading-loose italic text-lg">${page.text}</p>
+                                <div class="mt-10 text-right">
+                                    <p class="text-stone-400 text-sm font-sans uppercase mb-1">${page.sig}</p>
+                                    <p class="font-signature text-3xl text-rose-600">Darryl</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            break;
+          case "closing":
+            html = `
+                        <div class="text-center space-y-8 ${anim}">
+                            <div class="flex justify-center gap-2">
+                                <span class="animate-bounce">💖</span>
+                                <span class="animate-bounce delay-100">✨</span>
+                                <span class="animate-bounce delay-200">🌹</span>
+                            </div>
+                            <h1 class="text-5xl font-bold text-rose-900">${page.title}</h1>
+                            <h2 class="text-3xl font-signature text-rose-400">${page.subtitle}</h2>
+                            <p class="text-stone-400 italic font-light">${page.quote}</p>
+                            <button onclick="currentPage=0;renderPage();" class="mt-10 px-6 py-2 rounded-full border border-rose-200 text-rose-300 text-[10px] uppercase tracking-widest hover:bg-rose-50 transition-all">Repeat the Story</button>
+                        </div>
+                    `;
+            break;
+        }
+
+        container.innerHTML = html;
+      }
+
+      function nextPage() {
+        if (currentPage < pages.length - 1) {
+          currentPage++;
+          renderPage();
+        }
+      }
+      function prevPage() {
+        if (currentPage > 0) {
+          currentPage--;
+          renderPage();
+        }
+      }
+
+      // Music Controls
+      const musicToggle = document.getElementById("musicToggle");
+      const playIcon = document.getElementById("playIcon");
+      const pauseIcon = document.getElementById("pauseIcon");
+      const visualizer = document.getElementById("visualizer");
+
+      musicToggle.onclick = () => {
+        if (bgMusic.paused) {
+          bgMusic.play();
+          playIcon.classList.add("hidden");
+          pauseIcon.classList.remove("hidden");
+          visualizer.classList.remove("hidden");
+        } else {
+          bgMusic.pause();
+          playIcon.classList.remove("hidden");
+          pauseIcon.classList.add("hidden");
+          visualizer.classList.add("hidden");
+        }
+      };
+
+      startOverlay.onclick = () => {
+        startOverlay.style.opacity = "0";
+        setTimeout(() => (startOverlay.style.display = "none"), 1000);
+        bgMusic.play();
+        playIcon.classList.add("hidden");
+        pauseIcon.classList.remove("hidden");
+        visualizer.classList.remove("hidden");
+        createPetals();
+      };
+
+      renderPage();
+    </script>
+  </body>
+</html>
